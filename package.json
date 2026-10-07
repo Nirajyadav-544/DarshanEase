@@ -1,0 +1,11 @@
+{
+  "name": "darshanease-workspace",
+  "version": "1.0.0",
+  "description": "Enterprise MERN Stack Platform for Temple Bookings",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm start --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
+  }
+}
