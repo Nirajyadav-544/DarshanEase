@@ -90,7 +90,14 @@ app.use(helmet({
             scriptSrc: ["'self'", "https://checkout.razorpay.com"],
             connectSrc: ["'self'", "https://razorpay.com", "https://api.razorpay.com", ...devConnectSrc],
             frameSrc: ["'self'", "https://razorpay.com", "https://api.razorpay.com"],
-            imgSrc: ["'self'", "data:", "https://unsplash.com", "https://razorpay.com"],
+            imgSrc: [
+    "'self'",
+    "data:",
+    "https://unsplash.com",
+    "https://images.unsplash.com",
+    "https://plus.unsplash.com",
+    "https://razorpay.com"
+],
             styleSrc: ["'self'", "'unsafe-inline'"]
         }
     }
