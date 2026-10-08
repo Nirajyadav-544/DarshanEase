@@ -10,20 +10,16 @@ const sendWelcomeEmail = require("../utils/welcomeTemplate");
 // =========================================================================
 const registerUser = async (req, res) => {
     try {
-      const { name, email, password, phone } = req.body || {};
+        const { name, email, password, phone } = req.body || {};
 
-if (!name || !email || !password) {
-    return res.status(400).json({
-        success: false,
-        message: "Name, email and password are required"
-    });
-}
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Name, email and password are required"
+            });
+        }
 
-        const normalizedEmail = email.trim().toLowerCase();
-
-        const existingUser = await User.findOne({
-            email: normalizedEmail
-        });
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(400).json({
@@ -35,8 +31,8 @@ if (!name || !email || !password) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await User.create({
-            name: name.trim(),
-            email: normalizedEmail,
+            name,
+            email,
             password: hashedPassword,
             phone: phone ? phone.trim() : undefined,
             role: "user"
@@ -53,15 +49,10 @@ if (!name || !email || !password) {
             }
         );
 
-        await sendWelcomeEmail(
-            user.email,
-            user.name,
-            "Devotee User"
-        );
-
-        return res.status(201).json({
+        // Registration response immediately
+        res.status(201).json({
             success: true,
-            message: "User Registered Successfully",
+            message: "Registered Successfully",
             token,
             user: {
                 _id: user._id,
@@ -71,13 +62,27 @@ if (!name || !email || !password) {
             }
         });
 
-    } catch (err) {
-        console.error("Register User Error:", err);
-
-        return res.status(500).json({
-            success: false,
-            message: err.message
+        // Send email after response
+        sendWelcomeEmail(
+            user.email,
+            user.name,
+            "Devotee User"
+        ).catch((emailError) => {
+            console.error(
+                "Welcome email failed:",
+                emailError.message
+            );
         });
+
+    } catch (err) {
+        console.error("Registration error:", err);
+
+        if (!res.headersSent) {
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
     }
 };
 
