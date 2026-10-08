@@ -37,13 +37,21 @@ export default function Register() {
     }
 
     try {
-      const response = await API.post('/auth/register', {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        password: password,
-        phone: phone.trim(),
-        role: role 
-      });
+      const response = await API.post(
+  '/auth/register',
+  JSON.stringify({
+    name: name.trim(),
+    email: email.trim().toLowerCase(),
+    password,
+    phone: phone.trim(),
+    role
+  }),
+  {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
       
       toast.success(`Welcome to DarshanEase! Auto-Logged in successfully.`);
       
